@@ -1,4 +1,4 @@
-from schema import VisitorOut
+import re
 
 ERRORS = {}
 
@@ -38,7 +38,7 @@ def validate_visitor(data: dict):
     return bool(ERRORS)
 
 
-def assign_score(data: VisitorOut):
+def assign_score(data: dict):
     total_score = 0
     if check_visitor_name(data):
         total_score += 2
@@ -51,3 +51,10 @@ def assign_score(data: VisitorOut):
     if check_greeting(data):
         total_score += 2
     return total_score
+
+def is_valid_ip(ip: str) -> bool:
+    ip_regex = re.compile(
+        r'^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}'
+        r'(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$'
+    )
+    return bool(ip_regex.match(ip))
