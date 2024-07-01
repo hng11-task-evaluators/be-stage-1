@@ -20,6 +20,7 @@ async def grade(api_url: str):
     global errors
     errors = []  # Reset errors for each grading request
     score = 10
+    response_data = {}
 
     try:
         # Check if the API URL is reachable and visitor_name is included in the query params
@@ -65,7 +66,7 @@ async def grade(api_url: str):
     except Exception as e:
         print("error", e)
         errors.append(str(e))
-        return {"score": score, "response": response_data, "errors": errors}
+        return {"score": (score * 0), "response": response_data, "error-type": f"{type(e)}", "errors": errors}
         #raise HTTPException(status_code=400, detail=str(e))
 
 if __name__ == "__main__":
