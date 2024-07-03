@@ -53,8 +53,19 @@ def assign_score(data: dict):
     return total_score
 
 def is_valid_ip(ip: str) -> bool:
-    ip_regex = re.compile(
-        r'^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}'
-        r'(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$'
+    
+    # IPv4 pattern
+    ipv4_pattern = r'((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)'
+
+    # IPv4-mapped IPv6 pattern
+    ipv4_mapped_ipv6_pattern = r'::ffff:((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)'
+
+    # Combined pattern
+    combined_pattern = re.compile(
+        r'^(' + ipv4_pattern + r'|' + ipv4_mapped_ipv6_pattern + r')$'
     )
-    return bool(ip_regex.match(ip))
+    # ip_regex = re.compile(
+    #     r'^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}'
+    #     r'(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$'
+    # )
+    return bool(combined_pattern.match(ip))
