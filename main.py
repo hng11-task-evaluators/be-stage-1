@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 import httpx
+import re
 
 from checks import is_valid_ip
 
@@ -13,7 +14,7 @@ async def root():
 # the test API
 @app.get("/api/hello")
 async def test(visitor_name: str = "Tom"):
-    return {"client_ip": "", "location": "", "greeting": f"Hello {visitor_name}"}
+    return {"client_ip": "127.0.0.1", "location": "Anywhere", "greeting": f"Hello {visitor_name}"}
 
 @app.post("/grade")
 async def grade(api_url: str):
@@ -50,7 +51,17 @@ async def grade(api_url: str):
 
         # Check if JSON response contains the required properties
         if not response_data.get("client_ip") or not is_valid_ip(response_data.get("client_ip")):
-            errors.append("Client ip is missing or invalid")
+            is_variation = False
+            for key in response_data.keys():
+                if re.match(r"^(client)", key, re.IGNORECASE):
+                    # the is_valid_ip() condition would make this loop run even if client_ip exists
+                    if key == "client_ip":
+                        break
+                    is_variation = True
+                    errors.append(f"Variation: {key} is not client_ip")
+                    break
+            if not is_variation:
+                errors.append("Client ip is missing or invalid")
             score -= 2
 
         if not response_data.get("location"):
